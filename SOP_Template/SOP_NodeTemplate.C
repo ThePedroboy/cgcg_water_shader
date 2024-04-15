@@ -28,7 +28,9 @@ OP_ERROR SOP_NodeTemplate::cookMySop(OP_Context &context)
         GA_RWHandleV3 h(gdp, GA_ATTRIB_POINT, "P");
         UT_Vector3F pos = h.get(ptoff);
         auto waveYPos = evaluateYPos(pos[0], pos[1], pos[2], time);
-        UT_Vector3F newPos(pos[0], waveYPos, pos[2]);
+        auto waveXPos = evaluateXPos(pos[0], pos[1], pos[2], time);
+        auto waveZPos = evaluateZPos(pos[0], pos[1], pos[2], time);
+        UT_Vector3F newPos(waveXPos, waveYPos, waveZPos);
         h.set(ptoff, newPos);
         if (gdp->pointIndex(ptoff) == 0)
             std::cout <<  newPos << std::endl;
@@ -74,11 +76,13 @@ bool SOP_NodeTemplate::updateParmsFlags()
     changed |= enableParm(15, isWave2Enabled);
     changed |= enableParm(16, isWave2Enabled);
     changed |= enableParm(17, isWave2Enabled);
+    changed |= enableParm(18, isWave2Enabled);
 
-    changed |= enableParm(20, isWave3Enabled);
     changed |= enableParm(21, isWave3Enabled);
     changed |= enableParm(22, isWave3Enabled);
     changed |= enableParm(23, isWave3Enabled);
+    changed |= enableParm(24, isWave3Enabled);
+    changed |= enableParm(25, isWave3Enabled);
     return changed;
 }
 
@@ -95,54 +99,58 @@ static PRM_Name names[] = {
     PRM_Name("wave_1_direction", "Direction"),
     PRM_Name("wave_1", "Wave 1"),
 
-    PRM_Name("wave_2_amplitude", "Amplitude"),//10
+    PRM_Name("wave_2_steepness", "steepness"),//10 
+    PRM_Name("wave_2_amplitude", "Amplitude"),
     PRM_Name("wave_2_wavelength", "wavelength"),
     PRM_Name("wave_2_speed", "Speed"),
     PRM_Name("wave_2_direction", "Direction"),
     PRM_Name("wave_2", "Wave 2"),
 
-    PRM_Name("wave_3_amplitude", "Amplitude"),//15
+    PRM_Name("wave_3_steepness", "steepness"),//16
+    PRM_Name("wave_3_amplitude", "Amplitude"),
     PRM_Name("wave_3_wavelength", "wavelength"),
     PRM_Name("wave_3_speed", "Speed"),
     PRM_Name("wave_3_direction", "Direction"),
     PRM_Name("wave_3", "Wave 3"),
     
-    PRM_Name("wave_0_toggle", "Enable Wave 0"),
+    PRM_Name("wave_0_toggle", "Enable Wave 0"),//22
     PRM_Name("wave_1_toggle", "Enable Wave 1"),
     PRM_Name("wave_2_toggle", "Enable Wave 2"),
     PRM_Name("wave_3_toggle", "Enable Wave 3"),
 
 };
 
-
+//PRMunitRange
 PRM_Template SOP_NodeTemplate::TemplateList[] = {
-    PRM_Template(PRM_TOGGLE, 1,&names[20]),//0
+    PRM_Template(PRM_TOGGLE, 1,&names[22]),//0
     PRM_Template(PRM_LABEL, 1, &names[4]),
-    PRM_Template(PRM_FLT_J, 1, &names[0], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[1], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[2], PRMzeroDefaults, 0, &PRMfrequency10Range),
+    PRM_Template(PRM_FLT_J, 1, &names[0], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[1], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[2], PRMzeroDefaults, 0, &PRMrulerRange),
     PRM_Template(PRM_DIRECTION, 3, &names[3], PRMxaxisDefaults),
 
 
-    PRM_Template(PRM_TOGGLE, 1,&names[21]), //6
+    PRM_Template(PRM_TOGGLE, 1,&names[23]), //6
     PRM_Template(PRM_LABEL, 1, &names[9]),
-    PRM_Template(PRM_FLT_J, 1, &names[5], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[6], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[7], PRMzeroDefaults, 0, &PRMfrequency10Range),
+    PRM_Template(PRM_FLT_J, 1, &names[5], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[6], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[7], PRMzeroDefaults, 0, &PRMrulerRange),
     PRM_Template(PRM_DIRECTION, 3, &names[8], PRMxaxisDefaults),
 
-    PRM_Template(PRM_TOGGLE, 1,&names[22]), // 12
-    PRM_Template(PRM_LABEL, 1, &names[14]),
-    PRM_Template(PRM_FLT_J, 1, &names[10], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[11], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[12], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_DIRECTION, 3, &names[13], PRMxaxisDefaults),
+    PRM_Template(PRM_TOGGLE, 1,&names[24]), // 12
+    PRM_Template(PRM_LABEL, 1, &names[15]),
+    PRM_Template(PRM_FLT_J, 1, &names[10], PRMzeroDefaults, 0 , &PRMunitRange),
+    PRM_Template(PRM_FLT_J, 1, &names[11], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[12], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[13], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_DIRECTION, 3, &names[14], PRMxaxisDefaults),
 
-    PRM_Template(PRM_TOGGLE, 1,&names[23]), //18
-    PRM_Template(PRM_LABEL, 1, &names[19]),
-    PRM_Template(PRM_FLT_J, 1, &names[15], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[16], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_FLT_J, 1, &names[17], PRMzeroDefaults, 0, &PRMfrequency10Range),
-    PRM_Template(PRM_DIRECTION, 3, &names[18], PRMxaxisDefaults),
+    PRM_Template(PRM_TOGGLE, 1,&names[25]), //19
+    PRM_Template(PRM_LABEL, 1, &names[21]),
+    PRM_Template(PRM_FLT_J, 1, &names[16], PRMzeroDefaults, 0 , &PRMunitRange),
+    PRM_Template(PRM_FLT_J, 1, &names[17], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[18], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &names[19], PRMzeroDefaults, 0, &PRMrulerRange),
+    PRM_Template(PRM_DIRECTION, 3, &names[20], PRMxaxisDefaults),
     PRM_Template()
 };

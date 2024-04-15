@@ -16,6 +16,7 @@
 
 #include <memory>
 #include "SinWave.h"
+#include "GerstnerWave.h"
 #include "Names.h"
 #include <string>
 
@@ -24,6 +25,7 @@ namespace SOP_Template
 {
     using namespace std;
     namespace n = NamesN;
+
     constexpr fpreal wavelength = 10;
     constexpr fpreal amplitude = 10;
     constexpr fpreal speed = 1;
@@ -39,11 +41,10 @@ namespace SOP_Template
                 isWave3Enabled(true)
                 
             {
-                
                 wave0 = make_unique<SinWaveN::SinWave>(wavelength, amplitude, speed, UT_Vector3F(0,1,0));
                 wave1 = make_unique<SinWaveN::SinWave>(0, 0, 0, UT_Vector3F(0,0,0));
-                wave2 = make_unique<SinWaveN::SinWave>(0, 0, 0, UT_Vector3F(0,0,0));
-                wave3 = make_unique<SinWaveN::SinWave>(0, 0, 0, UT_Vector3F(0,0,0));
+                wave2 = make_unique<GerstnerWaveN::GerstnerWave>(0, 0, 0, UT_Vector3F(0,0,0));
+                wave3 = make_unique<GerstnerWaveN::GerstnerWave>(0, 0, 0, UT_Vector3F(0,0,0));
                 mySopFlags.setManagesDataIDs(true);
             }
 
@@ -66,8 +67,8 @@ namespace SOP_Template
         bool isWave3Enabled = true;
         unique_ptr<SinWaveN::SinWave> wave0 = nullptr;
         unique_ptr<SinWaveN::SinWave> wave1 = nullptr;
-        unique_ptr<SinWaveN::SinWave> wave2 = nullptr;
-        unique_ptr<SinWaveN::SinWave> wave3 = nullptr;
+        unique_ptr<GerstnerWaveN::GerstnerWave> wave2 = nullptr;
+        unique_ptr<GerstnerWaveN::GerstnerWave> wave3 = nullptr;
 
         void UpdateIsWaveEnabled(fpreal time)
         {
@@ -79,42 +80,104 @@ namespace SOP_Template
         fpreal evaluateYPos(fpreal x, fpreal y, fpreal z, fpreal t)
         {
             fpreal retY = 0;
-            if (isWave0Enabled)
+            if (isWave0Enabled && wave0 != nullptr)
                 retY += wave0->getYPos(x, y, z, t);
-            if (isWave1Enabled)
+            if (isWave1Enabled && wave1 != nullptr)
                 retY += wave1->getYPos(x, y, z, t);
-            if (isWave2Enabled)
-                retY += wave2->getYPos(x, y, z, t);
-            if (isWave3Enabled)
-                retY += wave3->getYPos(x, y, z, t);
+            if (isWave2Enabled && wave2 != nullptr)
+                retY += wave2->getYPosAddition(x, y, z, t);
+            if (isWave3Enabled && wave3 != nullptr)
+                retY += wave3->getYPosAddition(x, y, z, t);
             return retY;
+        }
+        fpreal evaluateXPos(fpreal x, fpreal y, fpreal z, fpreal t)
+        {
+            fpreal retX = x;
+            if (isWave2Enabled && wave2 != nullptr)
+                retX += wave2->getXPosAddition(x, y, z, t);
+            if (isWave3Enabled && wave3 != nullptr)
+                retX += wave3->getXPosAddition(x, y, z, t);
+      
+            return retX;
+        }
+        fpreal evaluateZPos(fpreal x, fpreal y, fpreal z, fpreal t)
+        {
+            fpreal retZ = z;
+            if (isWave2Enabled && wave2 != nullptr)
+                retZ += wave2->getZPosAddition(x, y, z, t);
+            if (isWave3Enabled && wave3 != nullptr)
+                retZ += wave3->getZPosAddition(x, y, z, t);
+  
+            return retZ;
+        }
+
+        fpreal getMaxSteepness(fpreal t)
+        {
+            fpreal product = 0;
+            if (isWave0Enabled && wave0 != nullptr)
+            {
+                fpreal freq = 2 / EVALFLOAT(t, "wave_0_wavelength");
+                fpreal ampl = EVALFLOAT(t, "wave_0_amplitude");
+                product += freq * ampl;
+            }
+            if (isWave1Enabled && wave1 != nullptr)
+            {
+                fpreal freq = 2 / EVALFLOAT(t, "wave_1_wavelength");
+                fpreal ampl = EVALFLOAT(t, "wave_1_amplitude");
+                product += freq * ampl;
+            }
+            if (isWave2Enabled && wave2 != nullptr)
+            {
+                fpreal freq = 2 / EVALFLOAT(t, "wave_2_wavelength");
+                fpreal ampl = EVALFLOAT(t, "wave_2_amplitude");
+                product += freq * ampl;
+            }
+            if (isWave3Enabled && wave3 != nullptr)
+            {
+                fpreal freq = 2 / EVALFLOAT(t, "wave_3_wavelength");
+                fpreal ampl = EVALFLOAT(t, "wave_3_amplitude");
+                product += freq * ampl;
+            }
+            return 1 / product;
+
         }
 
         void UpdateSinWave(fpreal t)
         {
-            wave0->updateEquationArguments(
-                EVALFLOAT(t, "wave_0_wavelength"), 
-                EVALFLOAT(t, "wave_0_amplitude"), 
-                EVALFLOAT(t, "wave_0_speed"),
-                UT_Vector3F(EVALFLOATVEC(t, "wave_0_direction", 0), 0, EVALFLOATVEC(t, "wave_0_direction", 2)));
+            auto maxSteepness = getMaxSteepness(t);
+            std::cout << maxSteepness << std::endl;
 
-            wave1->updateEquationArguments(
-                EVALFLOAT(t, "wave_1_wavelength"),
-                EVALFLOAT(t, "wave_1_amplitude"),
-                EVALFLOAT(t, "wave_1_speed"),
-                UT_Vector3F(EVALFLOATVEC(t, "wave_1_direction", 0), 0, EVALFLOATVEC(t, "wave_1_direction", 2)));
+            if (isWave0Enabled && wave0 != nullptr)
+                wave0->updateEquationArguments(
+                    EVALFLOAT(t, "wave_0_wavelength"), 
+                    EVALFLOAT(t, "wave_0_amplitude"), 
+                    EVALFLOAT(t, "wave_0_speed"),
+                    UT_Vector3F(EVALFLOATVEC(t, "wave_0_direction", 0), 0, EVALFLOATVEC(t, "wave_0_direction", 2)));
 
-            wave2->updateEquationArguments(
-                EVALFLOAT(t, "wave_2_wavelength"),
-                EVALFLOAT(t, "wave_2_amplitude"),
-                EVALFLOAT(t, "wave_2_speed"),
-                UT_Vector3F(EVALFLOATVEC(t, "wave_2_direction", 0), 0, EVALFLOATVEC(t, "wave_2_direction", 2)));
+            if (isWave1Enabled && wave1 != nullptr)
+                wave1->updateEquationArguments(
+                    EVALFLOAT(t, "wave_1_wavelength"),
+                    EVALFLOAT(t, "wave_1_amplitude"),
+                    EVALFLOAT(t, "wave_1_speed"),
+                    UT_Vector3F(EVALFLOATVEC(t, "wave_1_direction", 0), 0, EVALFLOATVEC(t, "wave_1_direction", 2)));
 
-            wave3->updateEquationArguments(
-                EVALFLOAT(t, "wave_3_wavelength"),
-                EVALFLOAT(t, "wave_3_amplitude"),
-                EVALFLOAT(t, "wave_3_speed"),
-                UT_Vector3F(EVALFLOATVEC(t, "wave_3_direction", 0), 0, EVALFLOATVEC(t, "wave_3_direction", 2)));
+            if (isWave2Enabled && wave2 != nullptr)
+                wave2->updateEquationArguments(
+                    EVALFLOAT(t, "wave_2_wavelength"),
+                    EVALFLOAT(t, "wave_2_amplitude"),
+                    EVALFLOAT(t, "wave_2_speed"),
+                    UT_Vector3F(EVALFLOATVEC(t, "wave_2_direction", 0), 0, EVALFLOATVEC(t, "wave_2_direction", 2)),
+                    EVALFLOAT(t, "wave_2_steepness"),
+                    maxSteepness);
+            
+            if (isWave3Enabled && wave3 != nullptr)
+                wave3->updateEquationArguments(
+                    EVALFLOAT(t, "wave_3_wavelength"),
+                    EVALFLOAT(t, "wave_3_amplitude"),
+                    EVALFLOAT(t, "wave_3_speed"),
+                    UT_Vector3F(EVALFLOATVEC(t, "wave_3_direction", 0), 0, EVALFLOATVEC(t, "wave_3_direction", 2)),
+                    EVALFLOAT(t, "wave_3_steepness"),
+                    maxSteepness);
         }
 
         int EVALINT(fpreal t, UT_StringHolder name) const { return evalInt(name, 0, t); }

@@ -37,7 +37,7 @@ namespace SinWaveN {
 
 		fpreal getYPos(fpreal x, fpreal y, fpreal z, fpreal t)
 		{
-			return amplitude * sin(dot(direction, UT_Vector3F(x, y, z) * frequency + t * phaseConstant));
+			return amplitude * sin(dot(UT_Vector2F(direction[0], direction[2]), UT_Vector2F(x, z) * frequency + t * phaseConstant));
 		}
 
 	private:
