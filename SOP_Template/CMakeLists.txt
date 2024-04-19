@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.6 )
 
-project( HDK_SOP_NodeTemplate )
+project( HDK_GerstnerWaveGenerator )
 
 # CMAKE_PREFIX_PATH must contain the path to the toolkit/cmake subdirectory of
 # the Houdini installation. See the "Compiling with CMake" section of the HDK
@@ -12,20 +12,19 @@ list( APPEND CMAKE_PREFIX_PATH "$ENV{HFS}/toolkit/cmake" )
 # Registers an imported library target named 'Houdini'.
 find_package( Houdini REQUIRED )
 
-set( library_name SOP_NodeTemplate )
-
-# Code generation for the embedded DS file in SOP_CopyPacked.C. 
-# houdini_generate_proto_headers( FILES SOP_CopyPacked.C )
-# Code generation for the embedded DS file in SOP_CopyPacked.C. 
+set( library_name GerstnerWaveGenerator )
 
 
-# Add a library and its source files.
+
+# Add a library and ierstnerWaveGenerator.cpp
 add_library( ${library_name} SHARED
-    SOP_NodeTemplate.C
-    SOP_NodeTemplate.h
-	GerstnerWave.h
+	GerstnerWaveGenerator.cpp
+	GerstnerWaveGenerator.h
 	Names.h
-	SinWave.h
+	GerstnerWave.h
+	ParallelAdditionEvaluator.h
+	ParallelAdditionEvaluator.cpp
+
 )
 
 # Link against the Houdini libraries, and add required include directories and
