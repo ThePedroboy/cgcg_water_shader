@@ -47,7 +47,7 @@ namespace GerstnerWaveGeneratorN
                 
             {
                 mySopFlags.setManagesDataIDs(true);
-                GerstnerWaveN::GerstnerWaveArgs args(true, 8, 2, 7, UT_Vector3F(-1, 0, 1), 0.6, 2 / 8 * 2);
+                GerstnerWaveN::GerstnerWaveArgs args(true, 8, 2, 7, UT_Vector2F(1,-1), 1, 1);
                 singleWave = make_unique<GerstnerWaveN::SingleGerstnerWave>(args);
             }
 
@@ -85,36 +85,13 @@ namespace GerstnerWaveGeneratorN
                     product += freq * ampl;
                 }
             }
-            /*if (isWave0Enabled)
-            {
-                fpreal freq = 2 / EVALFLOAT(t, "wave_0_wavelength");
-                fpreal ampl = EVALFLOAT(t, "wave_0_amplitude");
-                product += freq * ampl;
-            }
-            if (isWave1Enabled)
-            {
-                fpreal freq = 2 / EVALFLOAT(t, "wave_1_wavelength");
-                fpreal ampl = EVALFLOAT(t, "wave_1_amplitude");
-                product += freq * ampl;
-            }
-            if (isWave2Enabled)
-            {
-                fpreal freq = 2 / EVALFLOAT(t, "wave_2_wavelength");
-                fpreal ampl = EVALFLOAT(t, "wave_2_amplitude");
-                product += freq * ampl;
-            }
-            if (isWave3Enabled)
-            {
-                fpreal freq = 2 / EVALFLOAT(t, "wave_3_wavelength");
-                fpreal ampl = EVALFLOAT(t, "wave_3_amplitude");
-                product += freq * ampl;
-            }*/
             return 1 / product;
 
         }
 
-        void GetPointPosAdditions(UT_Vector3Array& pointPosAdditionArr, fpreal t);
-        void UpdatePointPos(UT_Vector3Array& pointPosAdditionArr);
+        void getPointPosAdditions(UT_Vector3Array& pointPosAdditionArr, fpreal t);
+        void updatePointPos(UT_Vector3Array& pointPosAdditionArr);
+        void updateSingleGerstnerWave(fpreal t);
 
         UT_ValArray<GerstnerWaveN::GerstnerWaveArgs> getGerstnerWaveArgs(fpreal t)
         {
@@ -128,7 +105,7 @@ namespace GerstnerWaveGeneratorN
                     EVALFLOATMULTIPARM(t, WAVELENGTH, i),
                     EVALFLOATMULTIPARM(t, AMPLITUDE,i),
                     EVALFLOATMULTIPARM(t, SPEED, i),
-                    UT_Vector3F(EVALFLOATVECMULTIPARM(t, DIRECTION, i, 0), 0, EVALFLOATVECMULTIPARM(t, DIRECTION, i,2)),
+                    UT_Vector2F(EVALFLOATVECMULTIPARM(t, DIRECTION, i, 0), EVALFLOATVECMULTIPARM(t, DIRECTION, i,1)),
                     EVALFLOATMULTIPARM(t, STEEPNESS,i),
                     maxSteepness)
                 );

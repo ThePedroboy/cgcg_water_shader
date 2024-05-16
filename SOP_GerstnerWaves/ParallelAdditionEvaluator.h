@@ -22,13 +22,13 @@ namespace ParallelAdditionEvaluatorN
 		// Once I figure out how to update point poss in parallel
 		/*void modifyPoint(GU_Detail* gdp, GA_Offset ptoff, fpreal t);*/
 
-		UT_Vector3F getPointPosAddition(UT_Vector3F pos, fpreal t) const;
+		UT_Vector3F getPointPosAddition(UT_Vector3F pos, fpreal t);
 
 	private:
 
-		fpreal evaluateYPos(UT_Vector3F pos, fpreal t) const;
-		fpreal evaluateXPos(UT_Vector3F pos, fpreal t) const;
-		fpreal evaluateZPos(UT_Vector3F pos, fpreal t) const;
+		fpreal evaluateYPos(UT_Vector3F pos, fpreal t);
+		fpreal evaluateXPos(UT_Vector3F pos, fpreal t);
+		fpreal evaluateZPos(UT_Vector3F pos, fpreal t);
 	
 		UT_ValArray<gw::GerstnerWave> gerstnerWaves;
 

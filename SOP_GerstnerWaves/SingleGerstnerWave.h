@@ -6,84 +6,55 @@
 namespace GerstnerWaveN {
 	using namespace std;
 
-	struct SingleGerstnerWave {
+	struct SingleGerstnerWave: private GerstnerWave {
 	public:
-		SingleGerstnerWave() :
-			args()
-		{}
-
-		SingleGerstnerWave(
-			const GerstnerWaveArgs& _args) :
-			args(_args)
-
-		{}
-
-
-		void updateEquationArguments(
-			const GerstnerWaveArgs& _args)
+		SingleGerstnerWave() :GerstnerWave() {}
+		SingleGerstnerWave(const GerstnerWaveArgs& _args) : GerstnerWave(_args) {}
+		
+		fpreal getYPosAddition(const UT_Vector3F &pos, fpreal t) override
 		{
-			args = _args;
+			fpreal yAddition = GerstnerWave::getYPosAddition(pos, t);
+			if (!shouldPointBeEvaluated(pos, yAddition))
+				return 0;
+
+			return GerstnerWave::getYPosAddition(pos, t);
 		}
-
-
-		fpreal getYPosAddition(const UT_Vector3F &pos, fpreal t) const
+		fpreal getXPosAddition(const UT_Vector3F& pos, fpreal t) override
 		{
-
+			//fpreal yAddition = GerstnerWave::getYPosAddition(pos, t);
 			if (!shouldPointBeEvaluated(pos))
 				return 0;
 
-			if (!args.enabled)
-				return 0;
+			return GerstnerWave::getXPosAddition(pos, t);
 
-			return args.amplitude * sin
-			(
-				args.frequency *
-				dot
-				(
-					UT_Vector2F(args.direction[0], args.direction[2]), UT_Vector2F(pos[0], pos[2])
-				)
-				+ t * args.phaseConstant);
 		}
-		fpreal getXPosAddition(UT_Vector3F pos, fpreal t) const
+		fpreal getZPosAddition(const UT_Vector3F& pos, fpreal t) override
 		{
+			//fpreal yAddition = GerstnerWave::getYPosAddition(pos, t);
 			if (!shouldPointBeEvaluated(pos))
 				return 0;
 
-			if (!args.enabled)
-				return 0;
-
-			return args.steepness * args.amplitude * args.direction[0] *
-				cos(
-					dot(args.frequency * UT_Vector2F(args.direction[0], args.direction[2]), UT_Vector2F(pos[0], pos[2]))
-					+ t * args.phaseConstant
-				);
+			return GerstnerWave::getZPosAddition(pos, t);
 
 		}
-		fpreal getZPosAddition(UT_Vector3F pos, fpreal t) const
+
+		void updatePosition(fpreal t)
 		{
-			if (!shouldPointBeEvaluated(pos))
-				return 0;
+			args.position = args.initPosition - args.direction * t * args.speed;
+		}
 
-			if (!args.enabled)
-				return 0;
-
-			return args.steepness * args.amplitude * args.direction[2] *
-				cos(
-					dot(args.frequency * UT_Vector2F(args.direction[0], args.direction[2]), UT_Vector2F(pos[0], pos[2]))
-					+ t * args.phaseConstant
-				);
-
+		UT_Vector2 getPos() override {
+			return args.position;
 		}
 
 	private:
-		GerstnerWaveArgs args;
 
-		bool shouldPointBeEvaluated(const UT_Vector3F& pos) const
+		bool shouldPointBeEvaluated(const UT_Vector3F& pos, fpreal yAddition = 0) const
 		{
 			auto distance = getDistanceFromPointToWave(UT_Vector2(pos.x(), pos.z()));
-			if (distance > args.waveLength)
+			if (distance > args.waveLength || yAddition < 0 )
 			{
-				cout << "Point '" << pos << "' too far from the wave : " << distance << endl;
+				//cout << "Point '" << pos << "' too far from the wave : " << distance << endl;
 				return false;
 			}
 			return true;
@@ -92,15 +63,17 @@ namespace GerstnerWaveN {
 		float getDistanceFromPointToWave(const UT_Vector2& point) const {
 			// Vector from pivot to the point in question
 			UT_Vector2 pointToPivot = point - args.position;
+			
 
 			// Perpendicular vector to the line direction
-			UT_Vector2 perpDirection = UT_Vector2(args.direction.y(), -args.direction.x());
+			/*UT_Vector2 perpDirection = UT_Vector2(args.direction.y(), args.direction.x());
+			perpDirection.normalize();*/
 
 			// Calculate the dot product of pointToPivot and the normalized perpendicular vector
-			float projection = pointToPivot.dot(perpDirection);
+			float projection = pointToPivot.dot(args.direction);
 
 			// Normalize the projection by the length of the perpendicular direction to get the distance
-			float distance = fabs(projection) / perpDirection.length();
+			float distance = fabs(projection) / args.direction.length();
 
 			return distance;
 		}
