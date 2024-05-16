@@ -13,8 +13,10 @@ namespace GerstnerWaveN {
 			amplitude(0),
 			speed(0),
 			phaseConstant(0),
-			direction(UT_Vector3F(0, 0, 0)),
-			steepness(0)
+			direction(UT_Vector2F(0, 0)),
+			steepness(0),
+			position(UT_Vector2F(0,0)),
+			initPosition(UT_Vector2F(0,0))
 		{
 
 		}
@@ -23,9 +25,10 @@ namespace GerstnerWaveN {
 			fpreal _waveLength,
 			fpreal _amplitude,
 			fpreal _speed,
-			const UT_Vector3F& _direction,
+			const UT_Vector2F& _direction,
 			fpreal _steepness,
-			fpreal _maxSteepness) :
+			fpreal _maxSteepness,
+			const UT_Vector2F& _position = UT_Vector2F(0,0)) :
 			enabled(_enabled),
 			waveLength(_waveLength),
 			frequency(2 / _waveLength),
@@ -34,9 +37,12 @@ namespace GerstnerWaveN {
 			phaseConstant(_speed * 2 / _waveLength),
 			direction(_direction),
 			steepness(_steepness* _maxSteepness)
+			
 
 		{
 			direction.normalize();
+			position = _position + _direction * _waveLength / 2;
+			initPosition = position;
 		}
 		bool enabled;
 		fpreal waveLength;
@@ -44,8 +50,10 @@ namespace GerstnerWaveN {
 		fpreal amplitude;
 		fpreal phaseConstant;
 		fpreal speed;
-		UT_Vector3F direction;
+		UT_Vector2F direction;
 		fpreal steepness;
+		UT_Vector2F position;
+		UT_Vector2F initPosition;
 	};
 	struct GerstnerWave {
 	public:
@@ -67,7 +75,7 @@ namespace GerstnerWaveN {
 		}
 
 
-		fpreal getYPosAddition(UT_Vector3F pos, fpreal t) const
+		virtual fpreal getYPosAddition(const UT_Vector3F& pos, fpreal t)
 		{
 			if (!args.enabled)
 				return 0;
@@ -77,36 +85,38 @@ namespace GerstnerWaveN {
 				args.frequency *
 				dot
 				(
-					UT_Vector2F(args.direction[0], args.direction[2]), UT_Vector2F(pos[0], pos[2])
+					args.direction, UT_Vector2F(pos[0], pos[2])
 				)
 				+ t * args.phaseConstant);
 		}
-		fpreal getXPosAddition(UT_Vector3F pos, fpreal t) const
+		virtual fpreal getXPosAddition(const UT_Vector3F& pos, fpreal t)
 		{
 			if (!args.enabled)
 				return 0;
 
 			return args.steepness * args.amplitude * args.direction[0] *
 				cos(
-					dot(args.frequency * UT_Vector2F(args.direction[0], args.direction[2]), UT_Vector2F(pos[0], pos[2]))
+					dot(args.frequency * args.direction, UT_Vector2F(pos[0], pos[2]))
 					+ t * args.phaseConstant
 				);
 
 		}
-		fpreal getZPosAddition(UT_Vector3F pos, fpreal t) const
+		virtual fpreal getZPosAddition(const UT_Vector3F& pos, fpreal t)
 		{
 			if (!args.enabled)
 				return 0;
 
-			return args.steepness * args.amplitude * args.direction[2] *
+			return args.steepness * args.amplitude * args.direction[1] *
 				cos(
-					dot(args.frequency * UT_Vector2F(args.direction[0], args.direction[2]), UT_Vector2F(pos[0], pos[2]))
+					dot(args.frequency * args.direction, UT_Vector2F(pos[0], pos[2]))
 					+ t * args.phaseConstant
 				);
 
 		}
+		virtual UT_Vector2 getPos() {
+			return args.position;
+		}
 
-	private:
 		GerstnerWaveArgs args;
 
 	};

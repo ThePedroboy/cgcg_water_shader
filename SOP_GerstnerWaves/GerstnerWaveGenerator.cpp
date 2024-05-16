@@ -32,7 +32,7 @@ static PRM_Template	gerstnerWaveTemplate[] = {
     PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[3], PRMoneDefaults, 0 , &PRMrulerRange),
     PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[4], PRMoneDefaults, 0 , &PRMrulerRange),
     PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[5], PRMzeroDefaults, 0 , &PRMrulerRange),
-    PRM_Template(PRM_DIRECTION, 3, &gerstnerWaveNames[6], PRMxaxisDefaults),
+    PRM_Template(PRM_DIRECTION, 2, &gerstnerWaveNames[6], PRMxaxisDefaults),
     PRM_Template(PRM_SEPARATOR, 1, &gerstnerWaveNames[7]),
     PRM_Template()
 };
@@ -44,7 +44,7 @@ PRM_Template GerstnerWaveGenerator::TemplateList[] = {
     PRM_Template()
 };
 
-void GerstnerWaveGenerator::UpdatePointPos(UT_Vector3Array& pointPosAdditionArr)
+void GerstnerWaveGenerator::updatePointPos(UT_Vector3Array& pointPosAdditionArr)
 {
     GA_RWHandleV3 h(gdp->findAttribute(GA_ATTRIB_POINT, "P"));
 
@@ -55,7 +55,7 @@ void GerstnerWaveGenerator::UpdatePointPos(UT_Vector3Array& pointPosAdditionArr)
     }
 }
 
-void GerstnerWaveGenerator::GetPointPosAdditions(UT_Vector3Array& pointPosAdditionArr, fpreal t)
+void GerstnerWaveGenerator::getPointPosAdditions(UT_Vector3Array& pointPosAdditionArr, fpreal t)
 {
 
     GA_Offset start, end;
@@ -98,9 +98,10 @@ OP_ERROR GerstnerWaveGenerator::cookMySop(OP_Context &context)
     auto numOfPoints = gdp->getNumPoints();
     UT_Vector3Array pointPosAdditionArr(numOfPoints, numOfPoints);
 
-    GetPointPosAdditions(pointPosAdditionArr, t);
-    UpdatePointPos(pointPosAdditionArr);
-
+    getPointPosAdditions(pointPosAdditionArr, t);
+    updatePointPos(pointPosAdditionArr);
+    updateSingleGerstnerWave(t);
+    singleWave->updatePosition(t);
     gdp->getP()->bumpDataId();
     return error();
 }
@@ -139,6 +140,26 @@ bool GerstnerWaveGenerator::updateParmsFlags()
     }
 
     return changed;
+}
+
+void GerstnerWaveGenerator::updateSingleGerstnerWave(fpreal t)
+{
+    GA_RWHandleV3 h(gdp->findAttribute(GA_ATTRIB_POINT, "P"));
+    if (!h.isValid()) {
+        return;
+    }
+
+    GA_Offset ptoff;
+    GA_FOR_ALL_PTOFF(gdp, ptoff)
+    {
+        UT_Vector3F pos = h.get(ptoff);
+        UT_Vector3F newPos(pos);
+        newPos[0] += singleWave->getXPosAddition(pos, t);
+        newPos[1] += singleWave->getYPosAddition(pos, t);
+        newPos[2] += singleWave->getZPosAddition(pos, t);
+        h.set(ptoff, newPos);
+
+    }
 }
 
 

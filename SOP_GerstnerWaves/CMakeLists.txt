@@ -24,6 +24,7 @@ add_library( ${library_name} SHARED
 	GerstnerWave.h
 	ParallelAdditionEvaluator.h
 	ParallelAdditionEvaluator.cpp
+	SingleGerstnerWave.h
 
 )
 

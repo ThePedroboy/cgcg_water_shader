@@ -27,7 +27,7 @@ void ParallelAdditionEvaluator::updateWavesArgs(const UT_ValArray<gw::GerstnerWa
 	}
 }
 
-UT_Vector3F ParallelAdditionEvaluator::getPointPosAddition(UT_Vector3F pos, fpreal t) const
+UT_Vector3F ParallelAdditionEvaluator::getPointPosAddition(UT_Vector3F pos, fpreal t)
 {
 	return UT_Vector3F(
 		evaluateXPos(pos, t),
@@ -36,30 +36,30 @@ UT_Vector3F ParallelAdditionEvaluator::getPointPosAddition(UT_Vector3F pos, fpre
 	);
 }
 
-fpreal ParallelAdditionEvaluator::evaluateYPos(UT_Vector3F pos, fpreal t) const
+fpreal ParallelAdditionEvaluator::evaluateYPos(UT_Vector3F pos, fpreal t) 
 {
 
 	fpreal retY = 0;
-	for (const auto& wave : gerstnerWaves)
+	for (auto& wave : gerstnerWaves)
 	{
 		retY += wave.getYPosAddition(pos, t);
 	}
 	return retY;
 }
 
-fpreal ParallelAdditionEvaluator::evaluateXPos(UT_Vector3F pos, fpreal t) const
+fpreal ParallelAdditionEvaluator::evaluateXPos(UT_Vector3F pos, fpreal t) 
 {
 	fpreal retX = 0;
-	for (const auto& wave : gerstnerWaves)
+	for (auto& wave : gerstnerWaves)
 	{
 		retX += wave.getXPosAddition(pos, t);
 	}
 	return retX;
 }
-fpreal ParallelAdditionEvaluator::evaluateZPos(UT_Vector3F pos, fpreal t) const
+fpreal ParallelAdditionEvaluator::evaluateZPos(UT_Vector3F pos, fpreal t) 
 {
 	fpreal retZ = 0;
-	for (const auto& wave : gerstnerWaves)
+	for (auto& wave : gerstnerWaves)
 	{
 		retZ += wave.getZPosAddition(pos, t);
 	}
