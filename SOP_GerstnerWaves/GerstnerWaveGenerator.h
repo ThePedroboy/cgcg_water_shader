@@ -18,6 +18,7 @@
 #include <memory>
 
 #include "GerstnerWave.h"
+#include "SingleGerstnerWave.h"
 #include "Names.h"
 #include <string>
 
@@ -46,6 +47,8 @@ namespace GerstnerWaveGeneratorN
                 
             {
                 mySopFlags.setManagesDataIDs(true);
+                GerstnerWaveN::GerstnerWaveArgs args(true, 8, 2, 7, UT_Vector3F(-1, 0, 1), 0.6, 2 / 8 * 2);
+                singleWave = make_unique<GerstnerWaveN::SingleGerstnerWave>(args);
             }
 
             ~GerstnerWaveGenerator(){}
@@ -67,6 +70,7 @@ namespace GerstnerWaveGeneratorN
 
             
     private:
+        unique_ptr<GerstnerWaveN::SingleGerstnerWave> singleWave;
 
         fpreal getMaxSteepness(fpreal t) const
         {
