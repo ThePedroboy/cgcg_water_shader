@@ -5,6 +5,8 @@
 #include <UT/UT_Vector3.h>
 #include <GU/GU_Detail.h>
 #include "GerstnerWave.h"
+#include "LocalGerstnerWave.h"
+#include "CircularGerstnerWave.h"
 
 
 
@@ -23,6 +25,7 @@ namespace ParallelAdditionEvaluatorN
 		/*void modifyPoint(GU_Detail* gdp, GA_Offset ptoff, fpreal t);*/
 
 		UT_Vector3F getPointPosAddition(UT_Vector3F pos, fpreal t);
+		
 
 	private:
 
@@ -31,6 +34,8 @@ namespace ParallelAdditionEvaluatorN
 		fpreal evaluateZPos(UT_Vector3F pos, fpreal t);
 	
 		UT_ValArray<gw::GerstnerWave> gerstnerWaves;
+		UT_ValArray<gw::LocalGerstnerWave> localGerstnerWaves;
+		UT_ValArray<gw::CircularGerstnerWave> circularGerstnerWaves;
 
 
 	};

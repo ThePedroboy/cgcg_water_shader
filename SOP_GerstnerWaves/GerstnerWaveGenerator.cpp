@@ -13,34 +13,90 @@ using namespace std;
 
 static PRM_Name gerstnerWaveNames[] =
 {
-    PRM_Name(NUMOFWAVES,	"Number of Waves"),
-    PRM_Name(ENABLE, "Enable Wave #"),
+    PRM_Name(GLOBALUNIFORMENABLE, "Enable Wave"),
     PRM_Name(STEEPNESS, "Steepness"),
     PRM_Name(AMPLITUDE, "Amplitude"),
     PRM_Name(WAVELENGTH, "wavelength"),
     PRM_Name(SPEED, "Speed"),
     PRM_Name(DIRECTION, "Direction"),
     PRM_Name(SEPARATOR, "Separator"),
+    PRM_Name(NUMOFGLOBALUNIFORMWAVES,"Global Wave Patterns"),
+
+    PRM_Name(0)
+};
+
+static PRM_Name gerstnerLocalWaveNames[] =
+{
+    PRM_Name(LOCALUNIFORMENABLE, "Enable local Wave"),
+    PRM_Name(LOCALSSTARTPOS, "Start Position"),
+    PRM_Name(LOCALSTEEPNESS, "Steepness"),
+    PRM_Name(LOCALAMPLITUDE, "Amplitude"),
+    PRM_Name(LOCALWAVELENGTH, "wavelength"),
+    PRM_Name(LOCALSPEED, "Speed"),
+    PRM_Name(LOCALDIRECTION, "Direction"),
+    PRM_Name(LOCALSEPARATOR, "Separator"),
+    PRM_Name(NUMOFLOCALUNIFORMWAVES,	"Local Wave Patterns"),
+
+    PRM_Name(0)
+};
+
+static PRM_Name gerstnerCircularWaveNames[] =
+{
+    PRM_Name(GLOBALCIRCULARENABLE, "Enable Circular Wave"),
+    PRM_Name(CIRCULARSSTARTPOS, "Start Position"),
+    PRM_Name(CIRCULARSTEEPNESS, "Steepness"),
+    PRM_Name(CIRCULARAMPLITUDE, "Amplitude"),
+    PRM_Name(CIRCULARWAVELENGTH, "wavelength"),
+    PRM_Name(CIRCULARSPEED, "Speed"),
+    PRM_Name(CIRCULARDIRECTION, "Direction"),
+    PRM_Name(CIRCULARSEPARATOR, "Separator"),
+    PRM_Name(NUMOFGLOBALCIRCULARWAVES, "Circular Wave Patterns"),
 
     PRM_Name(0)
 };
 
 
 static PRM_Template	gerstnerWaveTemplate[] = {
-    PRM_Template(PRM_TOGGLE, 1, &gerstnerWaveNames[1], PRMoneDefaults),
-    PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[2], PRMzeroDefaults, 0 , &PRMunitRange),
+    PRM_Template(PRM_TOGGLE, 1, &gerstnerWaveNames[0], PRMoneDefaults),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[1], PRMzeroDefaults, 0 , &PRMunitRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[2], PRMoneDefaults, 0 , &PRMrulerRange),
     PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[3], PRMoneDefaults, 0 , &PRMrulerRange),
-    PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[4], PRMoneDefaults, 0 , &PRMrulerRange),
-    PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[5], PRMzeroDefaults, 0 , &PRMrulerRange),
-    PRM_Template(PRM_DIRECTION, 2, &gerstnerWaveNames[6], PRMxaxisDefaults),
-    PRM_Template(PRM_SEPARATOR, 1, &gerstnerWaveNames[7]),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerWaveNames[4], PRMzeroDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_DIRECTION, 2, &gerstnerWaveNames[5], PRMxaxisDefaults),
+    PRM_Template(PRM_SEPARATOR, 1, &gerstnerWaveNames[6]),
+    PRM_Template()
+};
+
+static PRM_Template	gerstnerSingleWaveTemplate[] = {
+    PRM_Template(PRM_TOGGLE, 1, &gerstnerLocalWaveNames[0], PRMoneDefaults),
+    PRM_Template(PRM_DIRECTION, 2, &gerstnerLocalWaveNames[1], PRMxaxisDefaults),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerLocalWaveNames[2], PRMzeroDefaults, 0 , &PRMunitRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerLocalWaveNames[3], PRMoneDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerLocalWaveNames[4], PRMoneDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerLocalWaveNames[5], PRMzeroDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_DIRECTION, 2, &gerstnerLocalWaveNames[6], PRMxaxisDefaults),
+    PRM_Template(PRM_SEPARATOR, 1, &gerstnerLocalWaveNames[7]),
+    PRM_Template()
+};
+
+static PRM_Template	gerstnerCircularWaveTemplate[] = {
+    PRM_Template(PRM_TOGGLE, 1, &gerstnerCircularWaveNames[0], PRMoneDefaults),
+    PRM_Template(PRM_DIRECTION, 2, &gerstnerCircularWaveNames[1], PRMxaxisDefaults),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[2], PRMzeroDefaults, 0 , &PRMunitRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[3], PRMoneDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[4], PRMoneDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[5], PRMzeroDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_DIRECTION, 2, &gerstnerCircularWaveNames[6], PRMxaxisDefaults),
+    PRM_Template(PRM_SEPARATOR, 1, &gerstnerCircularWaveNames[7]),
     PRM_Template()
 };
 
 
 PRM_Template GerstnerWaveGenerator::TemplateList[] = {
-    PRM_Template(PRM_MULTITYPE_LIST, gerstnerWaveTemplate, 2, &gerstnerWaveNames[0],
+    PRM_Template(PRM_MULTITYPE_LIST, gerstnerWaveTemplate, 2, &gerstnerWaveNames[7],
             PRMoneDefaults),
+    PRM_Template(PRM_MULTITYPE_LIST, gerstnerSingleWaveTemplate, 2, &gerstnerLocalWaveNames[8], PRMoneDefaults),
+    PRM_Template(PRM_MULTITYPE_LIST, gerstnerCircularWaveTemplate, 2, &gerstnerCircularWaveNames[8], PRMoneDefaults),
     PRM_Template()
 };
 
@@ -63,6 +119,11 @@ void GerstnerWaveGenerator::getPointPosAdditions(UT_Vector3Array& pointPosAdditi
     end = gdp->pointOffset(gdp->getNumPoints());
 
     auto args = getGerstnerWaveArgs(t);
+
+    for (auto& arg : args)
+    {
+        arg.updateLocalPosition(t);
+    }
 
     UTparallelFor(UT_BlockedRange<GA_Offset>(start, end), [&](const UT_BlockedRange<GA_Offset>& range)
         {
@@ -100,8 +161,8 @@ OP_ERROR GerstnerWaveGenerator::cookMySop(OP_Context &context)
 
     getPointPosAdditions(pointPosAdditionArr, t);
     updatePointPos(pointPosAdditionArr);
-    updateSingleGerstnerWave(t);
-    singleWave->updatePosition(t);
+    //updateSingleGerstnerWave(t);
+
     gdp->getP()->bumpDataId();
     return error();
 }
@@ -129,16 +190,37 @@ bool GerstnerWaveGenerator::updateParmsFlags()
 {
     bool changed = false;
 
-    int n = NUMWAVES();
+    int n = NUMGLOBUNIFORMWAVEPATTERNS();
     for (int i = 1; i <= n; i++)
     {
-        changed |= enableParmInst(gerstnerWaveNames[2].getToken(), &i, WAVEENABLEDSTATUS(i));
-        changed |= enableParmInst(gerstnerWaveNames[3].getToken(), &i, WAVEENABLEDSTATUS(i));
-        changed |= enableParmInst(gerstnerWaveNames[4].getToken(), &i, WAVEENABLEDSTATUS(i));
-        changed |= enableParmInst(gerstnerWaveNames[5].getToken(), &i, WAVEENABLEDSTATUS(i));
-        changed |= enableParmInst(gerstnerWaveNames[6].getToken(), &i, WAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerWaveNames[1].getToken(), &i, GLOBALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerWaveNames[2].getToken(), &i, GLOBALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerWaveNames[3].getToken(), &i, GLOBALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerWaveNames[4].getToken(), &i, GLOBALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerWaveNames[5].getToken(), &i, GLOBALUNIFORMWAVEENABLEDSTATUS(i));
     }
 
+    n = NUMLOCALUNIFORMWAVEPATTERNS();
+    for (int i = 1; i <= n; i++)
+    {
+        changed |= enableParmInst(gerstnerLocalWaveNames[1].getToken(), &i, LOCALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerLocalWaveNames[2].getToken(), &i, LOCALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerLocalWaveNames[3].getToken(), &i, LOCALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerLocalWaveNames[4].getToken(), &i, LOCALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerLocalWaveNames[5].getToken(), &i, LOCALUNIFORMWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerLocalWaveNames[6].getToken(), &i, LOCALUNIFORMWAVEENABLEDSTATUS(i));
+    }
+
+    n = NUMGLOBALCIRCULARWAVEPATTERNS();
+    for (int i = 1; i <= n; i++)
+    {
+        changed |= enableParmInst(gerstnerCircularWaveNames[1].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerCircularWaveNames[2].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerCircularWaveNames[3].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerCircularWaveNames[4].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerCircularWaveNames[5].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerCircularWaveNames[6].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
+    }
     return changed;
 }
 
@@ -154,9 +236,9 @@ void GerstnerWaveGenerator::updateSingleGerstnerWave(fpreal t)
     {
         UT_Vector3F pos = h.get(ptoff);
         UT_Vector3F newPos(pos);
-        newPos[0] += singleWave->getXPosAddition(pos, t);
-        newPos[1] += singleWave->getYPosAddition(pos, t);
-        newPos[2] += singleWave->getZPosAddition(pos, t);
+        newPos[0] += localWave->getXPosAddition(pos, t);
+        newPos[1] += localWave->getYPosAddition(pos, t);
+        newPos[2] += localWave->getZPosAddition(pos, t);
         h.set(ptoff, newPos);
 
     }
