@@ -59,6 +59,7 @@ namespace GerstnerWaveGeneratorN
     constexpr char CIRCULARSSTARTPOS[] = "circularStartPos#";
     constexpr char CIRCULARSEPARATOR[] = "circularSeparator#";
     constexpr char NUMOFGLOBALCIRCULARWAVES[] = "NumberOfCircularWaves";
+    constexpr char ATTENUATIONEXPONENT[] = "AttenuationExponent";
  
 
     class GerstnerWaveGenerator : public SOP_Node
@@ -191,7 +192,8 @@ namespace GerstnerWaveGeneratorN
                     EVALFLOATMULTIPARM(t, CIRCULARSTEEPNESS, i),
                     maxSteepness,
                     GerstnerWaveN::GERSTNER_WAVE_TYPE_GLOBAL | GerstnerWaveN::GERSTNER_DIRECTION_TYPE_CIRCULAR,
-                    UT_Vector2F(EVALFLOATVECMULTIPARM(t, CIRCULARSSTARTPOS, i, 0), EVALFLOATVECMULTIPARM(t, CIRCULARSSTARTPOS, i, 1))
+                    UT_Vector2F(EVALFLOATVECMULTIPARM(t, CIRCULARSSTARTPOS, i, 0), EVALFLOATVECMULTIPARM(t, CIRCULARSSTARTPOS, i, 1)),
+                    EVALFLOATMULTIPARM(t, ATTENUATIONEXPONENT, i)
                 )
                 );
 

@@ -51,6 +51,7 @@ static PRM_Name gerstnerCircularWaveNames[] =
     PRM_Name(CIRCULARDIRECTION, "Direction"),
     PRM_Name(CIRCULARSEPARATOR, "Separator"),
     PRM_Name(NUMOFGLOBALCIRCULARWAVES, "Circular Wave Patterns"),
+    PRM_Name(ATTENUATIONEXPONENT, "Attenuation Exponent"),
 
     PRM_Name(0)
 };
@@ -79,6 +80,8 @@ static PRM_Template	gerstnerSingleWaveTemplate[] = {
     PRM_Template()
 };
 
+static PRM_Range PRMattenuationRange(PRM_RANGE_UI, 1.f, PRM_RANGE_UI, 2.f);
+
 static PRM_Template	gerstnerCircularWaveTemplate[] = {
     PRM_Template(PRM_TOGGLE, 1, &gerstnerCircularWaveNames[0], PRMoneDefaults),
     PRM_Template(PRM_DIRECTION, 2, &gerstnerCircularWaveNames[1], PRMxaxisDefaults),
@@ -86,6 +89,7 @@ static PRM_Template	gerstnerCircularWaveTemplate[] = {
     PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[3], PRMoneDefaults, 0 , &PRMrulerRange),
     PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[4], PRMoneDefaults, 0 , &PRMrulerRange),
     PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[5], PRMzeroDefaults, 0 , &PRMrulerRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[9], PRMzeroDefaults, 0 , &PRMattenuationRange),
     PRM_Template(PRM_DIRECTION, 2, &gerstnerCircularWaveNames[6], PRMxaxisDefaults),
     PRM_Template(PRM_SEPARATOR, 1, &gerstnerCircularWaveNames[7]),
     PRM_Template()
@@ -220,6 +224,7 @@ bool GerstnerWaveGenerator::updateParmsFlags()
         changed |= enableParmInst(gerstnerCircularWaveNames[4].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
         changed |= enableParmInst(gerstnerCircularWaveNames[5].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
         changed |= enableParmInst(gerstnerCircularWaveNames[6].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
+        changed |= enableParmInst(gerstnerCircularWaveNames[9].getToken(), &i, GLOBALCIRCULARWAVEENABLEDSTATUS(i));
     }
     return changed;
 }

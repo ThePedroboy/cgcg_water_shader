@@ -37,7 +37,8 @@ namespace GerstnerWaveN {
 			fpreal _steepness,
 			fpreal _maxSteepness,
 			const long long & _flags,
-			const UT_Vector2F& _position = UT_Vector2F(0,0)):
+			const UT_Vector2F& _position = UT_Vector2F(0,0),
+			fpreal _attenuationExponent = -1.f):
 			
 			enabled(_enabled),
 			waveLength(_waveLength),
@@ -47,7 +48,8 @@ namespace GerstnerWaveN {
 			phaseConstant(_speed * 2 / _waveLength),
 			direction(_direction),
 			steepness(_steepness* _maxSteepness),
-			flags(_flags)
+			flags(_flags),
+			attenuationExponent(_attenuationExponent)
 			
 
 		{
@@ -67,6 +69,7 @@ namespace GerstnerWaveN {
 		UT_Vector2F position;
 		UT_Vector2F initPosition;
 		long long flags;
+		optional<fpreal> attenuationExponent;
 
 		void updateLocalPosition(fpreal t)
 		{
