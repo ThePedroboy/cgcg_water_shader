@@ -48,7 +48,7 @@ namespace GerstnerWaveGeneratorN
     constexpr char LOCALSTEEPNESS[] = "localSteepness#";
     constexpr char LOCALSSTARTPOS[] = "localStartPos#";
     constexpr char LOCALSEPARATOR[] = "localSeparator#";
-    constexpr char NUMOFLOCALUNIFORMWAVES[] = "NumberOfSingleWaves";
+    constexpr char NUMOFLOCALUNIFORMWAVES[] = "numberOfSingleWaves";
 
     constexpr char GLOBALCIRCULARENABLE[] = "circularEnable#";
     constexpr char CIRCULARWAVELENGTH[] = "circularWavelength#";
@@ -58,8 +58,8 @@ namespace GerstnerWaveGeneratorN
     constexpr char CIRCULARSTEEPNESS[] = "circularSteepness#";
     constexpr char CIRCULARSSTARTPOS[] = "circularStartPos#";
     constexpr char CIRCULARSEPARATOR[] = "circularSeparator#";
-    constexpr char NUMOFGLOBALCIRCULARWAVES[] = "NumberOfCircularWaves";
-    constexpr char ATTENUATIONEXPONENT[] = "AttenuationExponent";
+    constexpr char NUMOFGLOBALCIRCULARWAVES[] = "numberOfCircularWaves";
+    constexpr char ATTENUATIONEXPONENT[] = "attenuationExponent";
  
 
     class GerstnerWaveGenerator : public SOP_Node
