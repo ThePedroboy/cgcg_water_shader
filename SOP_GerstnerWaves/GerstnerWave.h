@@ -76,7 +76,7 @@ namespace GerstnerWaveN {
 			if (flags & GERSTNER_WAVE_TYPE_LOCAL)
 			{
 				position = initPosition - direction * t * speed;
-				cout << position << endl;
+				
 			}
 		}
 	};
