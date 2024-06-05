@@ -89,7 +89,7 @@ static PRM_Template	gerstnerCircularWaveTemplate[] = {
     PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[3], PRMoneDefaults, 0 , &PRMrulerRange),
     PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[4], PRMoneDefaults, 0 , &PRMrulerRange),
     PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[5], PRMzeroDefaults, 0 , &PRMrulerRange),
-    PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[9], PRMzeroDefaults, 0 , &PRMattenuationRange),
+    PRM_Template(PRM_FLT_J, 1, &gerstnerCircularWaveNames[9], PRMzeroDefaults, 0 , &PRMfrequencyRange),
     PRM_Template(PRM_DIRECTION, 2, &gerstnerCircularWaveNames[6], PRMxaxisDefaults),
     PRM_Template(PRM_SEPARATOR, 1, &gerstnerCircularWaveNames[7]),
     PRM_Template()
